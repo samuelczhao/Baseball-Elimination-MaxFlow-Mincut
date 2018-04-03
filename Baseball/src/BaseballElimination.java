@@ -32,23 +32,13 @@ public class BaseballElimination
 		{
 			String line = in.readLine();
 			Scanner lineScanner = new Scanner(line);
-
-			// TODO: USE THIS SOMEHOW MAYBE: Name of team
 			names[i] = lineScanner.next();
-
-			// TODO: USE THIS SOMEHOW MAYBE: Number of wins for the team
 			win[i] = lineScanner.nextInt();
-
-			// TODO: USE THIS SOMEHOW MAYBE: Number of losses for the team
 			lose[i] = lineScanner.nextInt();
-
-			// TODO: USE THIS SOMEHOW MAYBE: Number of total remaining games for the team
 			remain[i] = lineScanner.nextInt();
 
 			for (int iAgainst = 0; iAgainst < cTeams; iAgainst++)
 			{
-				// TODO: USE THIS SOMEHOW MAYBE: Number of games remaining between iTeam and
-				// iAgainst
 				match[i][iAgainst] = lineScanner.nextInt();
 			}
 		}
@@ -62,8 +52,13 @@ public class BaseballElimination
 	private int getTeam(String name)
 	{
 		for (int i = 0; i < numOfTeam; i++)
+		{
 			if (names[i].equals(name))
+			{
 				return i;
+			}
+		}
+		
 		throw new IllegalArgumentException();
 	}
 
@@ -96,9 +91,13 @@ public class BaseballElimination
 	{
 		int t = getTeam(team);
 		if (tried[t])
+		{
 			return eliminated[t];
+		}
+		
 		tried[getTeam(team)] = true;
-		// trivial
+		
+		// Trivial Case
 		for (int i = 0; i < numOfTeam; i++)
 		{
 			if (win[t] + remain[t] < win[i])
@@ -107,10 +106,12 @@ public class BaseballElimination
 				return eliminated[t] = true;
 			}
 		}
-		// graph
+		
+		// Create graph
 		FlowNetwork flow = new FlowNetwork(numOfTeam * numOfTeam + numOfTeam + 2);
 		double total = 0;
 		for (int i = 0; i < numOfTeam; i++)
+		{
 			for (int j = i + 1; j < numOfTeam; j++)
 			{
 				if (i == t || j == t)
@@ -120,23 +121,40 @@ public class BaseballElimination
 				flow.addEdge(new FlowEdge(map(i, j), map(i), Double.POSITIVE_INFINITY));
 				flow.addEdge(new FlowEdge(map(i, j), map(j), Double.POSITIVE_INFINITY));
 			}
+		}
+		
 		for (int i = 0; i < numOfTeam; i++)
 		{
 			if (i == t)
+			{
 				continue;
+			}
+			
 			flow.addEdge(new FlowEdge(map(i), 1, win[t] + remain[t] - win[i]));
 		}
+		
 		FordFulkerson fordFulkerson = new FordFulkerson(flow, 0, 1);
+		
 		if (fordFulkerson.value() == total)
+		{
 			return eliminated[t] = false;
+		}
+		
 		ArrayList<String> c = new ArrayList<>();
+		
 		for (int i = 0; i < numOfTeam; i++)
 		{
 			if (i == t)
+			{
 				continue;
+			}
+			
 			if (fordFulkerson.inCut(map(i)))
+			{
 				c.add(names[i]);
+			}
 		}
+		
 		certificate[t] = c;
 		return eliminated[t] = true;
 	}
@@ -144,7 +162,10 @@ public class BaseballElimination
 	private int map(int i, int j)
 	{
 		if (i > j)
+		{
 			return j * numOfTeam + i + numOfTeam + 2;
+		}
+		
 		return i * numOfTeam + j + numOfTeam + 2;
 	}
 
@@ -171,6 +192,7 @@ public class BaseballElimination
 				{
 					StdOut.print(t + " ");
 				}
+				
 				StdOut.println("}");
 			}
 			else
