@@ -115,6 +115,7 @@ public class BaseballElimination
 			{
 				if (i == t || j == t)
 					continue;
+				total += match[i][j];
 				flow.addEdge(new FlowEdge(0, map(i, j), match[i][j]));
 				flow.addEdge(new FlowEdge(map(i, j), map(i), Double.POSITIVE_INFINITY));
 				flow.addEdge(new FlowEdge(map(i, j), map(j), Double.POSITIVE_INFINITY));
