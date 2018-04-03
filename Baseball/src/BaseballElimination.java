@@ -134,7 +134,7 @@ public class BaseballElimination
 		{
 			if (i == t)
 				continue;
-			if (!fordFulkerson.inCut(map(i)))
+			if (fordFulkerson.inCut(map(i)))
 				c.add(names[i]);
 		}
 		certificate[t] = c;
@@ -150,7 +150,7 @@ public class BaseballElimination
 
 	private int map(int i)
 	{
-		return numOfTeam + 2;
+		return i + 2;
 	}
 
 	public Iterable<String> certificateOfElimination(String team)
